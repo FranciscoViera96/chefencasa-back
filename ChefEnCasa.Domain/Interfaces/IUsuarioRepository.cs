@@ -1,13 +1,18 @@
 ﻿using ChefEnCasa.Domain.Entities;
-using System.Threading.Tasks;
 
 namespace ChefEnCasa.Domain.Interfaces
 {
     public interface IUsuarioRepository
     {
-        Task<Usuario?> GetByIdAsync(Guid id); // En la interfaz
-        Task<Usuario?> GetByEmailAsync(string email); // Agregamos el ?
-        Task<bool> CreateUserAsync(Usuario usuario); // Estilo Hrno
-        Task<bool> UpdateUserAsync(Usuario usuario); // Para el futuro
+        Task<Usuario?> GetByIdAsync(Guid id);
+        Task<Usuario?> GetByEmailAsync(string email);
+        Task<bool> CreateUserAsync(Usuario usuario);
+        Task<bool> UpdateUserAsync(Usuario usuario);
+        Task<bool> ExisteEmailAsync(string email);
+
+        // Verificaciones
+        Task<bool> CrearVerificacionAsync(Verificacion verificacion);
+        Task<Verificacion?> ObtenerVerificacionAsync(Guid usuarioId, string token);
+        Task<bool> EliminarVerificacionAsync(Verificacion verificacion);
     }
 }

@@ -1,8 +1,8 @@
+using ChefEnCasa.Aplication.Services;
 using ChefEnCasa.Application.Interfaces;
 using ChefEnCasa.Application.Mappings;
 using ChefEnCasa.Application.Services;
 using ChefEnCasa.Domain.Interfaces;
-using ChefEnCasa.Infraestructure.Persistence;
 using ChefEnCasa.Infrastructure.Configurations;
 using ChefEnCasa.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +34,14 @@ builder.Services.AddScoped<ISpoonacularSyncService, SpoonacularSyncService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//EMAIL
+builder.Services.AddScoped<IEmailService, EmailService>();
+
+//PErfil salud
+builder.Services.AddScoped<IPerfilSaludRepository, PerfilSaludRepository>();
+builder.Services.AddScoped<IPerfilSaludService, PerfilSaludService>();
+
 
 // 5. CORS Básico (Permite todo para evitar dolores de cabeza mientras desarrollamos la API)
 builder.Services.AddCors(options =>
