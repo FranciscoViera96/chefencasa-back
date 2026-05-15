@@ -1,5 +1,8 @@
 ﻿using ChefEnCasa.Application.Interfaces;
+using ChefEnCasa.Domain.Constants; 
+using ChefEnCasa.Infrastructure.Configurations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChefEnCasa.Api.Controllers
 {
@@ -20,6 +23,31 @@ namespace ChefEnCasa.Api.Controllers
             catch (Exception ex)
             {
                 return BadRequest(new { message = "Error en la sincronización", error = ex.Message });
+            }
+        }
+
+        [HttpPost("reajustar-medidas")]
+        public async Task<IActionResult> ReajustarMedidas([FromServices] ChefEnCasaDbContext context)
+        {
+            try
+            {
+                // Lo hacemos asíncrono (ToListAsync) para no colgar la API cuando tengamos 5000 ingredientes
+                var todosLosIngredientes = await context.RecetaIngredientes.ToListAsync();
+
+                foreach (var item in todosLosIngredientes)
+                {
+                    // Pasamos la cantidad y unidad original por la calculadora
+                    item.CantidadEnGramosOMl = ConversionesMedidas.ConvertirABase(item.Cantidad, item.UnidadMedida);
+                }
+
+                context.RecetaIngredientes.UpdateRange(todosLosIngredientes);
+                await context.SaveChangesAsync();
+
+                return Ok(new { message = $"Mantenimiento exitoso. Se reajustaron y sanitizaron las medidas de {todosLosIngredientes.Count} ingredientes en la BD." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error al reajustar medidas", detalle = ex.Message });
             }
         }
     }

@@ -44,5 +44,24 @@ namespace ChefEnCasa.Infrastructure.Persistence
                                        && a.IngredienteId == ingredienteId
                                        && a.FechaCaducidad == fechaCaducidad);
         }
+
+        public async Task<List<Almacen>> ObtenerLotesParaIngredientesAsync(Guid usuarioId, List<int> ingredienteIds)
+        {
+            // Traemos todos los lotes del usuario que coincidan con los ingredientes de la receta
+            return await _context.Almacenes
+                .Where(a => a.UsuarioId == usuarioId && ingredienteIds.Contains(a.IngredienteId))
+                .ToListAsync();
+        }
+
+        public async Task<bool> AplicarDescuentoFEFOAsync(List<Almacen> lotesAActualizar, List<Almacen> lotesAEliminar)
+        {
+            if (lotesAEliminar.Any())
+                _context.Almacenes.RemoveRange(lotesAEliminar);
+
+            if (lotesAActualizar.Any())
+                _context.Almacenes.UpdateRange(lotesAActualizar);
+
+            return await _context.SaveChangesAsync() > 0;
+        }
     }
 }

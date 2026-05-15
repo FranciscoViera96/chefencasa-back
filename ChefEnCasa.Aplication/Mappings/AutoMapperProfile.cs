@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ChefEnCasa.Aplication.DTOs;
 using ChefEnCasa.Application.DTOs;
 using ChefEnCasa.Domain.Entities;
 
@@ -35,6 +36,17 @@ namespace ChefEnCasa.Application.Mappings
             CreateMap<PerfilAlergia, AlergiaItemDTO>()
                 .ForMember(dest => dest.NombreIngrediente, opt => opt.MapFrom(src => src.Ingrediente.NombreEspanol));
             CreateMap<ActualizarPerfilSaludDTO, PerfilSalud>();
+
+
+
+            // 1. Mapear el reporte principal
+            CreateMap<ReporteCocina, ResultadoCocinaDTO>();
+
+            // 2. Mapear el detalle de cada ingrediente consumido
+            CreateMap<DetalleConsumo, DetalleConsumoDTO>();
+
+            //Ingredinte para listado
+            CreateMap<IngredienteFaltante, IngredienteFaltanteDTO>();
         }
     }
 }

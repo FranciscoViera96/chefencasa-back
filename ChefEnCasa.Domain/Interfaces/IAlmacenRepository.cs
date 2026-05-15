@@ -9,5 +9,8 @@ namespace ChefEnCasa.Domain.Interfaces
         Task<bool> AgregarAsync(Almacen almacen);
         Task<bool> ActualizarAsync(Almacen almacen);
         Task<Almacen?> ObtenerLoteEspecificoAsync(Guid usuarioId, int ingredienteId, DateTime? fechaCaducidad);
+
+        Task<List<Almacen>> ObtenerLotesParaIngredientesAsync(Guid usuarioId, List<int> ingredienteIds);
+        Task<bool> AplicarDescuentoFEFOAsync(List<Almacen> lotesAActualizar, List<Almacen> lotesAEliminar);
     }
 }
