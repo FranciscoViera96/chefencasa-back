@@ -7,9 +7,14 @@ namespace ChefEnCasa.Application.Services
     {
         private readonly IRecetaRepository _recetaRepository = recetaRepository;
 
-        public async Task<(List<Receta> Recetas, int TotalRegistros)> ObtenerRecetasPaginadasAsync(int pagina, int tamañoPagina, string? busqueda)
+        public async Task<(List<Receta> Recetas, int TotalRegistros)> ObtenerRecetasPaginadasAsync(
+            int pagina,
+            int tamañoPagina,
+            string? busqueda,
+            Guid? usuarioId = null)
         {
-            return await _recetaRepository.ObtenerRecetasPaginadasAsync(pagina, tamañoPagina, busqueda);
+            // El servicio solo llama al repositorio, sin tocar el DbContext
+            return await _recetaRepository.ObtenerRecetasPaginadasAsync(pagina, tamañoPagina, busqueda, usuarioId);
         }
 
         public async Task<Receta?> ObtenerRecetaPorIdAsync(int recetaId)

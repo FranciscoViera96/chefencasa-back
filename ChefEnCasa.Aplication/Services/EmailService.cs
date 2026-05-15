@@ -9,7 +9,7 @@ namespace ChefEnCasa.Aplication.Services // Ajusta el namespace si lo pones en A
     {
         // TODO: Recuerda cambiar esto por un correo de Gmail de Chef en Casa cuando lo crees
         private readonly string _emailOrigen = "don.wea.501@gmail.com";
-        private readonly string _passwordOrigen = "lday dofd gola xjsy";
+        private readonly string _passwordOrigen = "bujx ughk aokv nvhl";
 
         public async Task EnviarCorreoVerificacionAsync(string destinatario, string nombreUsuario, string codigo)
         {
@@ -40,7 +40,8 @@ namespace ChefEnCasa.Aplication.Services // Ajusta el namespace si lo pones en A
             using var clienteSmtp = new SmtpClient();
             try
             {
-                await clienteSmtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                //await clienteSmtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                await clienteSmtp.ConnectAsync("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
                 await clienteSmtp.AuthenticateAsync(_emailOrigen, _passwordOrigen);
                 await clienteSmtp.SendAsync(mensaje);
             }
@@ -81,7 +82,8 @@ namespace ChefEnCasa.Aplication.Services // Ajusta el namespace si lo pones en A
             using var clienteSmtp = new SmtpClient();
             try
             {
-                await clienteSmtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                //await clienteSmtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                await clienteSmtp.ConnectAsync("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
                 await clienteSmtp.AuthenticateAsync(_emailOrigen, _passwordOrigen);
                 await clienteSmtp.SendAsync(mensaje);
             }

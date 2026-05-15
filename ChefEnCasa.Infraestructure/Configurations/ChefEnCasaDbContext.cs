@@ -149,8 +149,10 @@ public partial class ChefEnCasaDbContext : DbContext
         modelBuilder.Entity<Almacen>(entity =>
         {
             entity.HasKey(e => e.AlmacenId);
-            entity.ToTable("ALMACENES"); // TOC arreglado
-            entity.HasIndex(e => new { e.UsuarioId, e.IngredienteId }).IsUnique();
+            entity.ToTable("ALMACENES");
+
+            // LA VERSIÓN CORREGIDA PARA SOPORTAR LOTES FEFO
+            entity.HasIndex(e => new { e.UsuarioId, e.IngredienteId, e.FechaCaducidad }).IsUnique();
         });
 
         // ==========================================

@@ -37,18 +37,20 @@ namespace ChefEnCasa.Api.Controllers
         {
             try
             {
+                // Mapeamos lo básico (Peso, Altura, Dietas)
                 var perfilEntidad = _mapper.Map<PerfilSalud>(dto);
 
+                // Le pasamos la entidad y la lista de IDs de alergias al servicio
                 var resultado = await _perfilService.ActualizarPerfilAsync(perfilEntidad, dto.AlergiasIngredienteIds);
 
                 if (resultado)
-                    return Ok(new { message = "Perfil de salud actualizado correctamente." });
+                    return Ok(new { message = "Perfil de salud y alergias actualizados correctamente." });
 
                 return BadRequest(new { message = "No se pudo actualizar el perfil." });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Error interno", detalle = ex.Message });
+                return StatusCode(500, new { message = "Error interno del servidor", detalle = ex.Message });
             }
         }
     }

@@ -13,12 +13,16 @@ namespace ChefEnCasa.Api.Controllers
         private readonly IMapper _mapper = mapper;
 
         [HttpGet]
-        public async Task<IActionResult> GetRecetas([FromQuery] int pagina = 1, [FromQuery] int tamañoPagina = 20, [FromQuery] string? busqueda = null)
+        public async Task<IActionResult> GetRecetas(
+            [FromQuery] int pagina = 1,
+            [FromQuery] int tamañoPagina = 20,
+            [FromQuery] string? busqueda = null,
+            [FromQuery] Guid? usuarioId = null) // 👈 AQUÍ RECIBIMOS EL ID DEL USUARIO
         {
             try
             {
-                // 1. Obtenemos las entidades desde el Dominio
-                var (recetasDb, total) = await _recetaService.ObtenerRecetasPaginadasAsync(pagina, tamañoPagina, busqueda);
+                // 1. Obtenemos las entidades desde el Dominio (ahora le pasamos el usuarioId)
+                var (recetasDb, total) = await _recetaService.ObtenerRecetasPaginadasAsync(pagina, tamañoPagina, busqueda, usuarioId);
 
                 // 2. Mapeamos de Entidad a DTO aquí en el Controller
                 var recetasDto = _mapper.Map<List<RecetaListDTO>>(recetasDb);
@@ -48,9 +52,7 @@ namespace ChefEnCasa.Api.Controllers
                 if (recetaDb == null)
                     return NotFound(new { message = $"No se encontró la receta con ID {id}" });
 
-                // Mapeamos al DTO detallado (que incluye los ingredientes)
                 var recetaDto = _mapper.Map<RecetaDetalleDTO>(recetaDb);
-
                 return Ok(recetaDto);
             }
             catch (Exception ex)

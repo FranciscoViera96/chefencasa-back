@@ -117,7 +117,7 @@ namespace ChefEnCasa.Application.Services
                 throw new ArgumentException("Código inválido o expirado.");
 
             usuario.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
-            usuario.PasswordHash = newPassword; 
+            //usuario.PasswordHash = newPassword; 
 
             usuario.ResetToken = null;
             usuario.ResetTokenExpiration = null;

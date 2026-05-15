@@ -6,8 +6,8 @@ namespace ChefEnCasa.Domain.Interfaces
     {
         Task<bool> CocinarRecetaAsync(Guid usuarioId, int recetaId);
 
-        // Retorna la Entidad Receta, nada de DTOs
-        Task<(List<Receta> Recetas, int TotalRegistros)> ObtenerRecetasPaginadasAsync(int pagina, int tamañoPagina, string? busqueda);
+        // Agregamos el usuarioId opcional
+        Task<(List<Receta> Recetas, int TotalRegistros)> ObtenerRecetasPaginadasAsync(int pagina, int tamañoPagina, string? busqueda, Guid? usuarioId = null);
 
         Task<Receta?> ObtenerRecetaPorIdAsync(int recetaId);
     }

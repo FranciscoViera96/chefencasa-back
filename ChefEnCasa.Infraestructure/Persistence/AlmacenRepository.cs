@@ -35,5 +35,14 @@ namespace ChefEnCasa.Infrastructure.Persistence
             _context.Almacenes.Update(almacen);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<Almacen?> ObtenerLoteEspecificoAsync(Guid usuarioId, int ingredienteId, DateTime? fechaCaducidad)
+        {
+            // Buscamos coincidencia exacta de ingrediente y fecha de caducidad
+            return await _context.Almacenes
+                .FirstOrDefaultAsync(a => a.UsuarioId == usuarioId
+                                       && a.IngredienteId == ingredienteId
+                                       && a.FechaCaducidad == fechaCaducidad);
+        }
     }
 }

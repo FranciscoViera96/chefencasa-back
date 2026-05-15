@@ -14,45 +14,35 @@ namespace ChefEnCasa.Application.Services
 
         public async Task<bool> AgregarOActualizarIngredienteAsync(Almacen almacenItem, decimal cantidadOriginal, string unidadOriginal)
         {
-            // 1. Normalizamos a gramos o ml
             decimal cantidadNormalizada = ConversionesMedidas.ConvertirABase(cantidadOriginal, unidadOriginal);
 
-            // 2. Buscamos si el usuario ya tiene este ingrediente en su almacén
-            var loteExistente = await _almacenRepository.ObtenerItemEspecificoAsync(almacenItem.UsuarioId, almacenItem.IngredienteId);
+            // 1. Si no viene fecha, calculamos la estándar del catálogo
+            if (!almacenItem.FechaCaducidad.HasValue)
+            {
+                var ingredienteCatalogo = await _context.Ingredientes.FindAsync(almacenItem.IngredienteId);
+                if (ingredienteCatalogo?.DiasVidaUtilEstimada != null)
+                {
+                    almacenItem.FechaCaducidad = DateTime.UtcNow.Date.AddDays(ingredienteCatalogo.DiasVidaUtilEstimada.Value);
+                }
+            }
+
+            // 2. Buscamos si ya existe un lote con la MISMA fecha de caducidad
+            var loteExistente = await _almacenRepository.ObtenerLoteEspecificoAsync(
+                almacenItem.UsuarioId,
+                almacenItem.IngredienteId,
+                almacenItem.FechaCaducidad);
 
             if (loteExistente != null)
             {
-                // REGLA KISS: Ya existe. Solo sumamos la cantidad.
                 loteExistente.CantidadEnGramosOMl += cantidadNormalizada;
                 loteExistente.FechaIngreso = DateTime.UtcNow;
-
-                // Si el usuario nos mandó una nueva fecha (compró uno más fresco), la actualizamos
-                if (almacenItem.FechaCaducidad.HasValue)
-                {
-                    loteExistente.FechaCaducidad = almacenItem.FechaCaducidad;
-                }
-
                 return await _almacenRepository.ActualizarAsync(loteExistente);
             }
-            else
-            {
-                // ES NUEVO. Aplicamos la magia de la Fecha Automática.
-                if (!almacenItem.FechaCaducidad.HasValue)
-                {
-                    // Buscamos el ingrediente en el catálogo para ver su vida útil
-                    var ingredienteCatalogo = await _context.Ingredientes.FindAsync(almacenItem.IngredienteId);
 
-                    if (ingredienteCatalogo != null && ingredienteCatalogo.DiasVidaUtilEstimada.HasValue)
-                    {
-                        almacenItem.FechaCaducidad = DateTime.UtcNow.AddDays(ingredienteCatalogo.DiasVidaUtilEstimada.Value);
-                    }
-                }
-
-                almacenItem.CantidadEnGramosOMl = cantidadNormalizada;
-                almacenItem.FechaIngreso = DateTime.UtcNow;
-
-                return await _almacenRepository.AgregarAsync(almacenItem);
-            }
+            // 3. Si la fecha es distinta (o es el primero), creamos fila nueva
+            almacenItem.CantidadEnGramosOMl = cantidadNormalizada;
+            almacenItem.FechaIngreso = DateTime.UtcNow;
+            return await _almacenRepository.AgregarAsync(almacenItem);
         }
         //public async Task<bool> AgregarOActualizarListaAsync(List<AgregarAlmacenDTO> listaIngredientes)
         //{
